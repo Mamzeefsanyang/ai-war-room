@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>AI Strategy War Room</h2>
+
+<input id="question" placeholder="Enter your question" style="width:300px;">
+<button onclick="run()">Start</button>
+
+<pre id="output"></pre>
+
+<script>
+async function run() {
+  const question = document.getElementById("question").value;
+
+  const res = await fetch("http://localhost:3000/warroom", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ question })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("output").textContent =
+`CEO:
+${data.CEO}
+
+CFO:
+${data.CFO}
+
+CMO:
+${data.CMO}
+
+Devil:
+${data.DEVIL}
+
+---------------------
+
+FINAL DECISION:
+${data.summary}`;
+}
+</script>
+
+</body>
+</html>
