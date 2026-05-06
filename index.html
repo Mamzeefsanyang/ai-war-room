@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Strategy War Room</title>
+</head>
 <body>
 
 <h2>AI Strategy War Room</h2>
@@ -13,7 +18,7 @@
 async function run() {
   const question = document.getElementById("question").value;
 
-  const res = await fetch("http://localhost:3000/warroom", {
+  const res = await fetch("/warroom", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
