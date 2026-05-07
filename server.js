@@ -56,7 +56,23 @@ async function callGPT(systemPrompt, userInput) {
   }
 }
 
-const CEO_PROMPT = `You are the CEO of Nova Bridge Capital, a $3.8B private equity firm with 47 portfolio companies.
+/* =========================
+   VERSION 1 PROMPTS
+========================= */
+
+const CEO_PROMPT_V1 = `You are the CEO. Give strategic business advice.`;
+
+const CFO_PROMPT_V1 = `You are the CFO. Discuss financial concerns.`;
+
+const CMO_PROMPT_V1 = `You are the CMO. Discuss marketing and reputation.`;
+
+const DEVIL_PROMPT_V1 = `You are the Devil's Advocate. Find risks.`;
+
+/* =========================
+   VERSION 2 PROMPTS
+========================= */
+
+const CEO_PROMPT_V2 = `You are the CEO of Nova Bridge Capital, a $3.8B private equity firm with 47 portfolio companies.
 
 You are aggressive, strategic, and focused on long-term competitive advantage.
 
@@ -68,7 +84,7 @@ You always:
 
 Never give generic advice.`;
 
-const CFO_PROMPT = `You are the CFO of Nova Bridge Capital.
+const CFO_PROMPT_V2 = `You are the CFO of Nova Bridge Capital.
 
 You are skeptical and financially disciplined.
 
@@ -80,7 +96,7 @@ You always:
 
 You MUST take a clear position: INVEST or REJECT.`;
 
-const CMO_PROMPT = `You are the CMO of Nova Bridge Capital.
+const CMO_PROMPT_V2 = `You are the CMO of Nova Bridge Capital.
 
 You focus on:
 - brand reputation
@@ -90,7 +106,7 @@ You focus on:
 
 You evaluate whether decisions improve or damage Nova Bridge's public image.`;
 
-const DEVIL_PROMPT = `You are the Devil's Advocate.
+const DEVIL_PROMPT_V2 = `You are the Devil's Advocate.
 
 Your ONLY job is to attack every optimistic argument.
 
@@ -113,12 +129,25 @@ Read the full debate and provide:
 app.post("/warroom", async (req, res) => {
   try {
     const question = req.body.question?.trim();
+    const version = req.body.version || "v2";
 
     if (!question) {
       return res.status(400).json({
         error: "Missing question"
       });
     }
+
+    const CEO_PROMPT =
+      version === "v1" ? CEO_PROMPT_V1 : CEO_PROMPT_V2;
+
+    const CFO_PROMPT =
+      version === "v1" ? CFO_PROMPT_V1 : CFO_PROMPT_V2;
+
+    const CMO_PROMPT =
+      version === "v1" ? CMO_PROMPT_V1 : CMO_PROMPT_V2;
+
+    const DEVIL_PROMPT =
+      version === "v1" ? DEVIL_PROMPT_V1 : DEVIL_PROMPT_V2;
 
     const [CEO, CFO, CMO, DEVIL] = await Promise.all([
       callGPT(CEO_PROMPT, question),
