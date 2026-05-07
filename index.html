@@ -4,48 +4,150 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Strategy War Room</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+      line-height: 1.5;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .controls {
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+
+    input {
+      width: 450px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      white-space: pre-wrap;
+    }
+
+    .title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>AI Strategy War Room</h2>
+<h1>AI Strategy War Room</h1>
 
-<input id="question" placeholder="Enter your question" style="width:300px;">
-<button onclick="run()">Start</button>
+<div class="controls">
 
-<pre id="output"></pre>
+  <input
+    id="question"
+    placeholder="Enter your business question"
+  >
+
+  <select id="version">
+    <option value="v1">Version 1</option>
+    <option value="v2" selected>Version 2</option>
+  </select>
+
+  <button onclick="run()">
+    Start
+  </button>
+
+</div>
+
+<div id="output"></div>
 
 <script>
+
 async function run() {
-  const question = document.getElementById("question").value;
 
-  const res = await fetch("/warroom", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ question })
-  });
+  const question =
+    document.getElementById("question").value;
 
-  const data = await res.json();
+  const version =
+    document.getElementById("version").value;
 
-  document.getElementById("output").textContent =
-`CEO:
-${data.CEO}
+  const output =
+    document.getElementById("output");
 
-CFO:
-${data.CFO}
+  output.innerHTML = "<p>Running War Room...</p>";
 
-CMO:
-${data.CMO}
+  try {
 
-Devil:
-${data.DEVIL}
+    const res = await fetch("/warroom", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        question,
+        version
+      })
+    });
 
----------------------
+    const data = await res.json();
 
-FINAL DECISION:
-${data.summary}`;
+    output.innerHTML = `
+
+      <div class="card">
+        <div class="title">CEO</div>
+        ${data.CEO}
+      </div>
+
+      <div class="card">
+        <div class="title">CFO</div>
+        ${data.CFO}
+      </div>
+
+      <div class="card">
+        <div class="title">CMO</div>
+        ${data.CMO}
+      </div>
+
+      <div class="card">
+        <div class="title">Devil's Advocate</div>
+        ${data.DEVIL}
+      </div>
+
+      <div class="card">
+        <div class="title">Final Decision</div>
+        ${data.summary}
+      </div>
+
+    `;
+
+  } catch (err) {
+
+    output.innerHTML = `
+      <div class="card">
+        Error: ${err.message}
+      </div>
+    `;
+
+  }
 }
+
 </script>
 
 </body>
